@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOX|Macro - Human Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Pulled from the app's dark-mode CSS variables */
+      --bg-steel: hsl(207, 22%, 56%);
+      --bg-navy: hsl(210, 35%, 12%);
+      --bg-navy-mid: hsl(210, 35%, 18%);
+      --bg-card: hsl(207, 30%, 83%);
+      --text-on-steel: hsl(210, 35%, 18%);
+      --text-on-steel-muted: hsl(210, 25%, 35%);
+      --text-on-navy: hsl(207, 30%, 88%);
+      --text-on-navy-muted: hsl(207, 22%, 60%);
+      --primary: hsl(210, 35%, 25%);
+      --border-steel: hsl(207, 22%, 60%);
+      --border-navy: hsl(210, 25%, 25%);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-navy);
+      color: var(--text-on-navy);
+      font-family: 'Source Code Pro', monospace;
+      overflow: hidden;
+    }
+
+    /* ---- SLIDE SYSTEM ---- */
+    .presentation { height: 100vh; width: 100vw; position: relative; overflow: hidden; }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 60px 80px;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .slide.active { opacity: 1; visibility: visible; }
+
+    /* Slide variants */
+    .slide--navy  { background: var(--bg-navy); color: var(--text-on-navy); }
+    .slide--steel { background: var(--bg-steel); color: var(--text-on-steel); }
+
+    /* ---- TYPOGRAPHY ---- */
+    .logo {
+      font-size: 64px;
+      font-weight: 200;
+      letter-spacing: 0.2em;
+    }
+    .logo-pipe { color: var(--text-on-navy-muted); }
+
+    .slide--steel .logo-pipe { color: var(--text-on-steel-muted); }
+
+    .tagline {
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+      margin-top: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    h2 {
+      font-size: 44px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    p, .desc {
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      margin-bottom: 16px;
+    }
+
+    .slide--navy .subtitle  { color: var(--text-on-navy-muted); }
+    .slide--steel .subtitle { color: var(--text-on-steel-muted); }
+    .slide--navy .desc      { color: var(--text-on-navy-muted); }
+    .slide--steel .desc     { color: var(--text-on-steel-muted); }
+
+    /* ---- FEATURE NUMBER ---- */
+    .feat-num {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .slide--steel .feat-num { color: var(--text-on-steel-muted); }
+
+    /* ---- TWO-COLUMN ---- */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+      max-width: 1300px;
+    }
+    .text-side { display: flex; flex-direction: column; justify-content: center; }
+    .text-side h2 { text-align: left; }
+    .text-side p, .text-side .desc { text-align: left; }
+
+    /* ---- VIDEO FRAME ---- */
+    .video-frame {
+      background: var(--bg-card);
+      border: 1px solid var(--border-steel);
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 12px 40px rgba(30, 45, 61, 0.25);
+    }
+    .video-frame video {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+    }
+
+    /* ---- BULLETS ---- */
+    .bullets { text-align: left; margin-top: 28px; }
+    .bullets li {
+      font-size: 22px;
+      font-weight: 300;
+      margin: 18px 0;
+      list-style: none;
+      padding-left: 28px;
+      position: relative;
+    }
+    .slide--navy .bullets li  { color: var(--text-on-navy-muted); }
+    .slide--steel .bullets li { color: var(--text-on-steel-muted); }
+
+    .bullets li::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      font-weight: 600;
+    }
+    .slide--navy .bullets li::before  { color: var(--text-on-navy); }
+    .slide--steel .bullets li::before { color: var(--text-on-steel); }
+
+    /* ---- STATS ---- */
+    .stats-row { display: flex; gap: 100px; margin-top: 56px; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 72px; font-weight: 700; }
+    .stat-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-top: 8px;
+      color: var(--text-on-navy-muted);
+    }
+
+    /* ---- TOKEN FLOW ---- */
+    .flow { display: flex; align-items: center; gap: 28px; margin-top: 48px; flex-wrap: wrap; justify-content: center; }
+    .flow-step {
+      background: var(--border-navy);
+      border: 1px solid hsl(210, 25%, 30%);
+      border-radius: 10px;
+      padding: 22px 28px;
+      text-align: center;
+      min-width: 150px;
+    }
+    .flow-step h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .flow-step p  { font-size: 14px; color: var(--text-on-navy-muted); max-width: none; }
+    .flow-arrow   { font-size: 20px; color: var(--text-on-navy-muted); }
+
+    /* ---- CTA ---- */
+    .cta-button {
+      display: inline-block;
+      background: var(--bg-card);
+      color: var(--bg-navy);
+      padding: 16px 52px;
+      border-radius: 8px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 40px;
+      letter-spacing: 0.05em;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(196, 211, 222, 0.2);
+    }
+
+    /* ---- NAV / CHROME ---- */
+    .slide-number {
+      position: fixed; bottom: 28px; right: 40px;
+      font-size: 13px; font-weight: 300;
+      color: var(--text-on-navy-muted);
+      z-index: 10;
+      transition: color 0.5s ease;
+    }
+    .slide-number.on-steel { color: var(--text-on-steel-muted); }
+
+    .nav-hint {
+      position: fixed; bottom: 28px; left: 40px;
+      font-size: 12px; font-weight: 300;
+      color: var(--text-on-navy-muted);
+      z-index: 10;
+      transition: color 0.5s ease;
+    }
+    .nav-hint.on-steel { color: var(--text-on-steel-muted); }
+    .nav-hint kbd {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin: 0 1px;
+    }
+    .nav-hint.on-steel kbd {
+      background: rgba(0,0,0,0.06);
+      border-color: rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--bg-card);
+      transition: width 0.3s ease;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="presentation">
+    <div class="progress-bar" id="progress"></div>
+
+    <!-- 1. TITLE -->
+    <div class="slide slide--navy active" data-slide="1" data-theme="navy">
+      <div class="logo">VOX<span class="logo-pipe">|</span>Macro</div>
+      <p class="tagline">Vox Populi, Vox Dei</p>
+    </div>
+
+    <!-- 2. PROBLEM -->
+    <div class="slide slide--navy" data-slide="2" data-theme="navy">
+      <h2>The Problem</h2>
+      <p class="desc" style="text-align:center;">Too much noise in financial media, social platforms, and financial market research providers. In a world of AI-generated content, how do you know whether you are interacting with someone with skin in the game?</p>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-value">95%</div>
+          <div class="stat-label">Noise</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">5%</div>
+          <div class="stat-label">Signal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SOLUTION -->
+    <div class="slide slide--navy" data-slide="3" data-theme="navy">
+      <h2>The Solution</h2>
+      <p class="desc" style="text-align:center;">An invite-only platform for vetted investors and market participants, designed from the ground-up to focus on sharing views, analysis and sentiment on financial markets.</p>
+      <ul class="bullets">
+        <li>Curated community &mdash; every member is invited</li>
+        <li>Structured sentiment capture &mdash; instantly generate surveys about more specific topics</li>
+        <li>Seamless charting and prediction market integration &mdash; designed to leverage the best new sources of information</li>
+        <li>Extracting and ranking the macro news that moves markets &mdash; review the current and past drivers of price action</li>
+        <li>Earn points &mdash; reward quality participation</li>
+      </ul>
+    </div>
+
+    <!-- 4. LOGIN -->
+    <div class="slide slide--steel" data-slide="4" data-theme="steel">
+      <div class="two-col">
+        <div class="text-side">
+          <div class="feat-num">01 &mdash; Access</div>
+          <h2>Invite-Only Entry</h2>
+          <p class="desc">Every member is vetted. Your invite code is your key in.</p>
+        </div>
+        <div class="video-frame">
+          <video src="1.-log-in.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. DAILY SURVEY -->
+    <div class="slide slide--steel" data-slide="5" data-theme="steel">
+      <div class="two-col">
+        <div class="video-frame">
+          <video src="2.-take-survey.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <div class="text-side">
+          <div class="feat-num">02 &mdash; Survey</div>
+          <h2>Daily Sentiment Survey</h2>
+          <p class="desc">Register your sentiment on key macro assets every day. Bullish, neutral, or bearish. Takes 15 seconds.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. SENTIMENT DASHBOARD -->
+    <div class="slide slide--steel" data-slide="6" data-theme="steel">
+      <div class="two-col">
+        <div class="text-side">
+          <div class="feat-num">03 &mdash; Sentiment</div>
+          <h2>Aggregate Sentiment</h2>
+          <p class="desc">Watch community positioning shift in real-time. See where conviction clusters.</p>
+        </div>
+        <div class="video-frame">
+          <video src="3.-aggregate-sentiment.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. MACRO NEWS PULSE -->
+    <div class="slide slide--steel" data-slide="7" data-theme="steel">
+      <div class="two-col">
+        <div class="video-frame">
+          <video src="4.-macro-news-pulse.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <div class="text-side">
+          <div class="feat-num">04 &mdash; News</div>
+          <h2>Macro News Pulse</h2>
+          <p class="desc">AI-curated macro news delivered to the community feed. Stay informed without the noise.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. CHARTS & ASSET TAGGING -->
+    <div class="slide slide--steel" data-slide="8" data-theme="steel">
+      <div class="two-col">
+        <div class="text-side">
+          <div class="feat-num">05 &mdash; Charts</div>
+          <h2>Asset Charts &amp; Tagging</h2>
+          <p class="desc">Tag any ticker in chat to instantly cohere comments and charts on a topic.</p>
+        </div>
+        <div class="video-frame">
+          <video src="5.-chat-chart-and-tagging.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. POLYMARKET -->
+    <div class="slide slide--steel" data-slide="9" data-theme="steel">
+      <div class="two-col">
+        <div class="video-frame">
+          <video src="6.-chat-polymarket.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <div class="text-side">
+          <div class="feat-num">06 &mdash; Prediction Markets</div>
+          <h2>Polymarket Integration</h2>
+          <p class="desc">Share updating prediction market contracts directly in chat. See what the crowd is pricing on any macro event.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. TWEET EMBEDS -->
+    <div class="slide slide--steel" data-slide="10" data-theme="steel">
+      <div class="two-col">
+        <div class="text-side">
+          <div class="feat-num">07 &mdash; Social</div>
+          <h2>Tweet Embeds</h2>
+          <p class="desc">Share and discuss tweets inline. Macro commentary with full context, no need to leave the conversation.</p>
+        </div>
+        <div class="video-frame">
+          <video src="7.-chat-tweets.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. TRADINGVIEW -->
+    <div class="slide slide--steel" data-slide="11" data-theme="steel">
+      <div class="two-col">
+        <div class="video-frame">
+          <video src="8.-chat-tradingview.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <div class="text-side">
+          <div class="feat-num">08 &mdash; TradingView</div>
+          <h2>TradingView Charts</h2>
+          <p class="desc">Embed TradingView charts in the chat with just a link.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. COMMUNITY POLLS -->
+    <div class="slide slide--steel" data-slide="12" data-theme="steel">
+      <div class="two-col">
+        <div class="text-side">
+          <div class="feat-num">09 &mdash; Polls</div>
+          <h2>Community Polls</h2>
+          <p class="desc">Create polls on specific price targets for any asset, any timeframe. Tag the asset and a chart with price history and polling options emerges.</p>
+        </div>
+        <div class="video-frame">
+          <video src="9.-chat-poll.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. CTA -->
+    <div class="slide slide--navy" data-slide="13" data-theme="navy">
+      <div class="logo">VOX<span class="logo-pipe">|</span>Macro</div>
+      <p style="font-size:22px; font-weight:300; margin-top:24px; text-align:center;">Where serious investors find signal.</p>
+      <a href="mailto:voxmacro@praxisveritas.io?subject=I'd%20like%20to%20join%20Vox%20Macro" class="cta-button">Request Access</a>
+      <p style="margin-top:36px; font-size:14px; color:var(--text-on-navy-muted);">
+        voxmacro.praxisveritas.io
+      </p>
+    </div>
+
+    <div class="slide-number"><span id="current">1</span> / <span id="total">13</span></div>
+    <div class="nav-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>Space</kbd> to navigate</div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+
+    const slideNumEl  = document.querySelector('.slide-number');
+    const navHintEl   = document.querySelector('.nav-hint');
+
+    document.getElementById('total').textContent = totalSlides;
+
+    function showSlide(n) {
+      if (n < 1) n = 1;
+      if (n > totalSlides) n = totalSlides;
+
+      slides.forEach(s => s.classList.remove('active'));
+      const target = document.querySelector(`[data-slide="${n}"]`);
+      target.classList.add('active');
+
+      currentSlide = n;
+      document.getElementById('current').textContent = n;
+      document.getElementById('progress').style.width = `${(n / totalSlides) * 100}%`;
+
+      // Adapt chrome color to slide theme
+      const theme = target.dataset.theme;
+      slideNumEl.classList.toggle('on-steel', theme === 'steel');
+      navHintEl.classList.toggle('on-steel', theme === 'steel');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        showSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        showSlide(currentSlide - 1);
+      }
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) {
+        showSlide(currentSlide + (diff > 0 ? 1 : -1));
+      }
+    });
+  </script>
+</body>
+</html>
