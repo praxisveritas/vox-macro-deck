@@ -102,6 +102,14 @@
       .slide { padding: 40px 24px; }
     }
   </style>
+  <!-- Google Analytics 4 — replace G-XXXXXXXXXX with your GA4 Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PW9600ZP22"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PW9600ZP22');
+  </script>
 </head>
 <body>
   <div class="slide">
@@ -110,10 +118,7 @@
     <p class="subtitle">
       Send us a request and we'll get you set up.
     </p>
-    <a href="mailto:voxmacro@praxisveritas.io?subject=I'd%20like%20to%20join%20Vox%20Macro" class="cta-button">Request Access</a>
+    <a href="mailto:voxmacro@praxisveritas.io?subject=I'd%20like%20to%20join%20Vox%20Macro" class="cta-button" onclick="gtag('event', 'request_access', { 'event_category': 'engagement', 'event_label': new URLSearchParams(window.location.search).get('ref') || 'direct' });">Request Access</a>
   </div>
   <div class="footer">
-    <a href="https://praxisveritas.github.io/vox-macro-deck/">View full product deck &rarr;</a>
-  </div>
-</body>
-</html>
+    <a href="https://praxisv
