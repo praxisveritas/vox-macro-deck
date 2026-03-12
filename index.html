@@ -437,7 +437,7 @@
     <div class="slide slide--navy" data-slide="15" data-theme="navy">
       <div class="logo">VOX<span class="logo-pipe">|</span>Macro</div>
       <p style="font-size:22px; font-weight:300; margin-top:24px; text-align:center;">Where serious investors find signal.</p>
-      <a href="/cdn-cgi/l/email-protection#54223b2c393537263b142426352c3d272231263d2035277a3d3b6b2721363e313720691d7330716664383d3f31716664203b7166643e3b3d3a716664023b2c716664193537263b" class="cta-button">Request Access</a>
+      <a href="mailto:voxmacro@praxisveritas.io?subject=I'd%20like%20to%20join%20Vox%20Macro" class="cta-button">Request Access</a>
       <p style="margin-top:36px; font-size:14px; color:var(--text-on-navy-muted);">
         voxmacro.praxisveritas.io
       </p>
@@ -450,14 +450,14 @@
       <p style="font-size:14px; font-weight:300; color:var(--text-on-navy-muted); margin-top:16px; text-align:center; line-height:1.7;">
         Send us a request and we'll get you set up.
       </p>
-      <a href="/cdn-cgi/l/email-protection#02746d7a6f6361706d427270637a6b717467706b7663712c6b6d3d717760686761763f4b25662730326e6b6967273032766d273032686d6b6c273032546d7a2730324f6361706d" class="cta-button">Request Access</a>
+      <a href="mailto:voxmacro@praxisveritas.io?subject=I'd%20like%20to%20join%20Vox%20Macro" class="cta-button">Request Access</a>
     </div>
 
     <div class="slide-number"><span id="current">1</span> / <span id="total">16</span></div>
     <div class="nav-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>Space</kbd> to navigate</div>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     const slides = document.querySelectorAll('.slide');
     const totalSlides = slides.length;
     let currentSlide = 1;
@@ -497,4 +497,13 @@
 
     // Touch support
     let touchStartX = 0;
-    document.addEventListener('touchstart',
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) {
+        showSlide(currentSlide + (diff > 0 ? 1 : -1));
+      }
+    });
+  </script>
+</body>
+</html>
